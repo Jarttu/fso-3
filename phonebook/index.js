@@ -20,12 +20,22 @@ let persons = [
     {
         "id": "4",
         "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
+        "number": "39-23-6423123"
     }
 ]
 
 app.get('/api/persons', (request, response) => {
     response.json(persons);
+})
+
+app.get('/info', (request, response) => {
+    const personsCount = persons.length;
+    const date = new Date();
+
+    response.send(`
+        <p>Phonebook has info for ${personsCount} people</p>
+        <p>${date}</p>
+    `)
 })
 
 const PORT = 3001;
