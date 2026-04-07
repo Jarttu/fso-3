@@ -1,9 +1,11 @@
 const express = require('express');
 const morgan = require('morgan')
 const cors = require('cors');
+const path = require('path')
 
 const app = express();
 
+app.use(express.static('dist'))
 app.use(cors());
 app.use(express.json())
 
@@ -95,8 +97,12 @@ app.post('/api/persons', (request, response) => {
         number: body.number
     }
     persons = persons.concat(person);
-    response.json(person);
+    response.status(201).json(person);
 })
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
