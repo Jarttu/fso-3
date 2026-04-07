@@ -1,11 +1,13 @@
 const express = require('express');
 const morgan = require('morgan')
 const cors = require('cors');
-const path = require('path')
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 const app = express();
 
-app.use(express.static('dist'))
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 app.use(cors());
 app.use(express.json())
 
@@ -14,6 +16,12 @@ morgan.token('body', (req) => {
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+app.use(express.static(join(__dirname, 'dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(join(__dirname, 'dist', 'index.html'));
+});
 
 let persons = [
     {
@@ -99,10 +107,6 @@ app.post('/api/persons', (request, response) => {
     persons = persons.concat(person);
     response.status(201).json(person);
 })
-
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
