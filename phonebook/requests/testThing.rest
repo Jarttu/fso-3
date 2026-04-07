@@ -1,1 +1,9 @@
-DELETE  http://localhost:3001/api/persons/6207
+DELETE  https://fso-3-j263.onrender.com/api/persons/2814
+
+POST https://fso-3-j263.onrender.com/api/persons
+Content-Type: application/json
+
+{
+  "name": "Internet Test",
+  "number": "999-999"
+}
