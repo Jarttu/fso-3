@@ -1,7 +1,9 @@
+require('dotenv').config()
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan')
 const cors = require('cors');
+const Person = require('./models/person')
 
 const app = express();
 
@@ -41,8 +43,10 @@ let persons = [
     }
 ]
 
-app.get('/api/persons', (request, response) => {
-    response.json(persons);
+app.get('/api/persons', (req, res) => {
+  Person.find({}).then(persons => {
+    res.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -105,7 +109,7 @@ app.post('/api/persons', (request, response) => {
 
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
-    return next(); // skip API routes
+    return next();
   }
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
