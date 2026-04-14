@@ -69,16 +69,14 @@ app.get('/info', (request, response) => {
     `)
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const personExists = persons.some(p => p.id === id);
+app.delete('/api/persons/:id', (request, response, next) => {
+    const id = request.params.id;
 
-    if (personExists) {
-        persons = persons.filter(p => p.id !== id);
-        response.status(204).end();
-    } else {
-        response.status(404).end();
-    }
+    Person.findByIdAndDelete(id)
+        .then(() => {
+            response.status(204).end();
+        })
+        .catch(error => next(error));
 });
 
 app.post('/api/persons', (request, response, next) => {
