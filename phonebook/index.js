@@ -81,31 +81,26 @@ app.delete('/api/persons/:id', (request, response) => {
     }
 });
 
-app.post('/api/persons', (request, response) => {
-    const body = request.body;
+app.post('/api/persons', (request, response, next) => {
+    const { name, number } = request.body;
 
-    if (!body.name || !body.number) {
+    if (!name || !number) {
         return response.status(400).json({
             error: 'name or number missing'
         });
     }
 
-    const nameExists = persons.some(p => p.name === body.name)
+    const person = new Person({
+        name,
+        number
+    });
 
-    if (nameExists) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        });
-    }
-
-    const person = {
-        id: Math.floor(Math.random() * 10000),
-        name: body.name,
-        number: body.number
-    }
-    persons = persons.concat(person);
-    response.status(201).json(person);
-})
+    person.save()
+        .then(savedPerson => {
+            response.status(201).json(savedPerson);
+        })
+        .catch(error => next(error));
+});
 
 app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
